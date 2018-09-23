@@ -1,8 +1,13 @@
 package cz.brauntadeas.filemanager;
 
 import android.Manifest;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -10,14 +15,21 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.io.File;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class MainActivity extends AppCompatActivity {
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Dexter.withActivity(this)
                 .withPermissions(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new MultiplePermissionsListener() {
@@ -32,5 +44,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .check();
+
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        FileAdapter fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory().listFiles());
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(fileAdapter);
     }
 }

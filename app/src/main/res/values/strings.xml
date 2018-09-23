@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">File Manager</string>
+    <string name="file_type_icon">File type icon</string>
 </resources>
