@@ -16,8 +16,13 @@ import butterknife.ButterKnife;
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
     private File[] files;
 
-    FileAdapter(File[] files) {
-        this.files = files;
+    FileAdapter(File file) {
+        files = file.listFiles();
+    }
+
+    private void updateList(File file) {
+        files = file.listFiles();
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -28,10 +33,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
-        File file = files[position];
+    public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
+        final File file = files[position];
         holder.textFileName.setText(file.getName());
         holder.imageFileType.setImageResource(getFileIcon(file.isDirectory()));
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (file.isDirectory()) {
+                    updateList(file);
+                } else {
+
+                }
+            }
+        });
     }
 
     @Override

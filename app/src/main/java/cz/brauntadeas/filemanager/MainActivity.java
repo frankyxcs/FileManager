@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        FileAdapter fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory().listFiles());
+        FileAdapter fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(fileAdapter);
     }
