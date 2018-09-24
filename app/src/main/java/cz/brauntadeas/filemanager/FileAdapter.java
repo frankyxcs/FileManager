@@ -19,22 +19,42 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
-    private File[] files;
+    private List<File> fileList;
     private File currentFolder;
 
     FileAdapter(File file) {
         currentFolder = file;
-        files = file.listFiles();
+        fileList = Arrays.asList(file.listFiles());
+        sortList(fileList);
+    }
+
+    private void sortList(List<File> fileList) {
+        Collections.sort(fileList, new Comparator<File>() {
+            @Override
+            public int compare(File fileOne, File fileTwo) {
+                int directoryCompare = -1 * Boolean.compare(fileOne.isDirectory(), fileTwo.isDirectory());
+                if (directoryCompare == 0) {
+                    return fileOne.getName().toLowerCase().compareTo(fileTwo.getName().toLowerCase());
+                }
+                return directoryCompare;
+            }
+        });
     }
 
     private void updateList(File file) {
         currentFolder = file;
-        files = file.listFiles();
+        fileList = Arrays.asList(file.listFiles());
+        sortList(fileList);
         notifyDataSetChanged();
     }
 
@@ -59,7 +79,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull final FileViewHolder holder, int position) {
-        final File file = files[position];
+        final File file = fileList.get(position);
         holder.textFileName.setText(file.getName());
         holder.imageFileType.setImageResource(getFileIcon(file.isDirectory()));
 
@@ -88,7 +108,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     @Override
     public int getItemCount() {
-        return files.length;
+        return fileList.size();
     }
 
     private int getFileIcon(boolean isDirectory) {
