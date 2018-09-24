@@ -19,7 +19,9 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
+import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
+    private static final String CURRENT_FOLDER = "current_folder";
 
     private FileAdapter fileAdapter;
 
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
-        fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory());
+        fileAdapter = new FileAdapter(getFolder(savedInstanceState));
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(fileAdapter);
     }
@@ -69,6 +73,13 @@ public class MainActivity extends AppCompatActivity {
         return layoutManager;
     }
 
+    private File getFolder(Bundle bundle) {
+        if (bundle != null) {
+            return (File) bundle.getSerializable(CURRENT_FOLDER);
+        }
+        return Environment.getExternalStorageDirectory();
+    }
+
     @Override
     public void onBackPressed() {
         if (fileAdapter.canNavigateUp()) {
@@ -76,6 +87,12 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putSerializable(CURRENT_FOLDER, fileAdapter.getCurrentFolder());
+        super.onSaveInstanceState(outState);
     }
 
     @Override

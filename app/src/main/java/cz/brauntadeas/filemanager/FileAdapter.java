@@ -46,6 +46,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         return !currentFolder.equals(Environment.getExternalStorageDirectory());
     }
 
+    File getCurrentFolder() {
+        return currentFolder;
+    }
+
     @NonNull
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
