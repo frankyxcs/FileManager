@@ -21,6 +21,8 @@
         android:layout_height="match_parent"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:layout_marginStart="16dp"
+        android:minLines="1"
+        android:maxLines="1"
         app:layout_constraintLeft_toRightOf="@id/image_file_type"
         app:layout_constraintTop_toTopOf="@id/image_file_type"
         app:layout_constraintBottom_toBottomOf="@id/image_file_type" />

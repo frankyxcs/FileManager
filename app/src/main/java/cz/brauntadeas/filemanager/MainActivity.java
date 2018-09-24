@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
         fileAdapter = new FileAdapter(getFolder(savedInstanceState));
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(fileAdapter);
     }
