@@ -1,9 +1,11 @@
 package cz.brauntadeas.filemanager;
 
 import android.Manifest;
+import android.content.res.Configuration;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -51,10 +53,20 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .check();
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        RecyclerView.LayoutManager layoutManager = getLayoutManager();
         fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory());
-        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(fileAdapter);
+    }
+
+    private RecyclerView.LayoutManager getLayoutManager() {
+        RecyclerView.LayoutManager layoutManager;
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            layoutManager = new LinearLayoutManager(this);
+        } else {
+            layoutManager = new GridLayoutManager(this, 2);
+        }
+        return layoutManager;
     }
 
     @Override
