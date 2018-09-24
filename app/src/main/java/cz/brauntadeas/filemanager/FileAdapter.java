@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.content.FileProvider;
 import android.support.v7.widget.RecyclerView;
@@ -24,14 +25,25 @@ import butterknife.ButterKnife;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
     private File[] files;
+    private File currentFolder;
 
     FileAdapter(File file) {
+        currentFolder = file;
         files = file.listFiles();
     }
 
     private void updateList(File file) {
+        currentFolder = file;
         files = file.listFiles();
         notifyDataSetChanged();
+    }
+
+    void navigateUp() {
+        updateList(currentFolder.getParentFile());
+    }
+
+    boolean canNavigateUp() {
+        return !currentFolder.equals(Environment.getExternalStorageDirectory());
     }
 
     @NonNull

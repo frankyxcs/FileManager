@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+
+    private FileAdapter fileAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +52,18 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        FileAdapter fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory());
+        fileAdapter = new FileAdapter(Environment.getExternalStorageDirectory());
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(fileAdapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (fileAdapter.canNavigateUp()) {
+            fileAdapter.navigateUp();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
