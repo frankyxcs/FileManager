@@ -80,24 +80,21 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         holder.textFileName.setText(file.getName());
         holder.imageFileType.setImageResource(getFileIcon(file.isDirectory()));
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (file.isDirectory()) {
-                    updateList(file);
-                } else {
-                    Intent intent = new Intent();
-                    Context context = holder.itemView.getContext();
-                    Uri uri = getFileUri(file, context);
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                    intent.setDataAndType(uri, getMimeType(uri, context));
-                    try {
-                        context.startActivity(intent);
-                    } catch (ActivityNotFoundException e) {
-                        e.printStackTrace();
-                        Toast.makeText(context, R.string.no_activity, Toast.LENGTH_SHORT).show();
-                    }
+        holder.itemView.setOnClickListener(view -> {
+            if (file.isDirectory()) {
+                updateList(file);
+            } else {
+                Intent intent = new Intent();
+                Context context = holder.itemView.getContext();
+                Uri uri = getFileUri(file, context);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                intent.setDataAndType(uri, getMimeType(uri, context));
+                try {
+                    context.startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context, R.string.no_activity, Toast.LENGTH_SHORT).show();
                 }
             }
         });
