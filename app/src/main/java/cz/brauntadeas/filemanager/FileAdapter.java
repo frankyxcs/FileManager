@@ -32,23 +32,28 @@ import butterknife.ButterKnife;
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
     private List<File> fileList = new ArrayList<>();
     private File currentFolder;
+    private RecyclerView recyclerView;
 
-    FileAdapter(File file) {
+    FileAdapter(File file, RecyclerView recyclerView) {
+        this.recyclerView = recyclerView;
         updateList(file);
     }
 
-    private void setFileList(List<File> fileList) {
+    private void setFileList(List<File> fileList, boolean isSameFolder) {
         this.fileList = fileList;
         notifyDataSetChanged();
+        if (!isSameFolder) {
+            recyclerView.scrollToPosition(0);
+        }
     }
 
     void updateList() {
-        newListTask(currentFolder);
+        newListTask(currentFolder, true);
     }
 
     private void updateList(File file) {
         currentFolder = file;
-        newListTask(file);
+        newListTask(file, false);
     }
 
     void navigateUp() {
@@ -63,8 +68,8 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         return currentFolder;
     }
 
-    private void newListTask(File file) {
-        new ListDirectoryTask(this).execute(file);
+    private void newListTask(File file, boolean isSameFolder) {
+        new ListDirectoryTask(this, isSameFolder).execute(file);
     }
 
     @NonNull
@@ -145,9 +150,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     private static class ListDirectoryTask extends AsyncTask<File, Integer, List<File>> {
         private WeakReference<FileAdapter> adapterReference;
+        private boolean isSameFolder;
 
-        ListDirectoryTask(FileAdapter fileAdapter) {
+        ListDirectoryTask(FileAdapter fileAdapter, boolean isSameFolder) {
             adapterReference = new WeakReference<>(fileAdapter);
+            this.isSameFolder = isSameFolder;
         }
 
         @Override
@@ -168,7 +175,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
         @Override
         protected void onPostExecute(List<File> fileList) {
-            adapterReference.get().setFileList(fileList);
+            adapterReference.get().setFileList(fileList, isSameFolder);
         }
     }
 }
