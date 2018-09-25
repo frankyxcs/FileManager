@@ -130,7 +130,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         @BindView(R.id.image_file_type)
         ImageView imageFileType;
 
-        @BindColor(R.color.colorAccent)
+        @BindColor(R.color.selectedColor)
         int colorAccent;
 
         FileViewHolder(View itemView) {
