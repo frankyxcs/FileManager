@@ -58,6 +58,12 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         notifyDataSetChanged();
     }
 
+    void refreshList() {
+        fileList = Arrays.asList(currentFolder.listFiles());
+        sortList(fileList);
+        notifyDataSetChanged();
+    }
+
     void navigateUp() {
         updateList(currentFolder.getParentFile());
     }
