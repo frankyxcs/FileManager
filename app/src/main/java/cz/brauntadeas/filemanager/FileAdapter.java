@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -19,49 +20,35 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder> {
-    private List<File> fileList;
+    private List<File> fileList = new ArrayList<>();
     private File currentFolder;
 
     FileAdapter(File file) {
-        currentFolder = file;
-        fileList = Arrays.asList(file.listFiles());
-        sortList(fileList);
+        updateList(file);
     }
 
-    private void sortList(List<File> fileList) {
-        Collections.sort(fileList, new Comparator<File>() {
-            @Override
-            public int compare(File fileOne, File fileTwo) {
-                int directoryCompare = -1 * Boolean.compare(fileOne.isDirectory(), fileTwo.isDirectory());
-                if (directoryCompare == 0) {
-                    return fileOne.getName().toLowerCase().compareTo(fileTwo.getName().toLowerCase());
-                }
-                return directoryCompare;
-            }
-        });
+    private void setFileList(List<File> fileList) {
+        this.fileList = fileList;
+        notifyDataSetChanged();
+    }
+
+    void updateList() {
+        newListTask(currentFolder);
     }
 
     private void updateList(File file) {
         currentFolder = file;
-        fileList = Arrays.asList(file.listFiles());
-        sortList(fileList);
-        notifyDataSetChanged();
-    }
-
-    void refreshList() {
-        fileList = Arrays.asList(currentFolder.listFiles());
-        sortList(fileList);
-        notifyDataSetChanged();
+        newListTask(file);
     }
 
     void navigateUp() {
@@ -74,6 +61,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     File getCurrentFolder() {
         return currentFolder;
+    }
+
+    private void newListTask(File file) {
+        new ListDirectoryTask(this).execute(file);
     }
 
     @NonNull
@@ -152,6 +143,35 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         FileViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+        }
+    }
+
+    private static class ListDirectoryTask extends AsyncTask<File, Integer, List<File>> {
+        private WeakReference<FileAdapter> adapterReference;
+
+        ListDirectoryTask(FileAdapter fileAdapter) {
+            adapterReference = new WeakReference<>(fileAdapter);
+        }
+
+        @Override
+        protected List<File> doInBackground(File... files) {
+            File file = files[0];
+            List<File> fileList = Arrays.asList(file.listFiles());
+
+            Collections.sort(fileList, (fileOne, fileTwo) -> {
+                int directoryCompare = -1 * Boolean.compare(fileOne.isDirectory(), fileTwo.isDirectory());
+                if (directoryCompare == 0) {
+                    return fileOne.getName().toLowerCase().compareTo(fileTwo.getName().toLowerCase());
+                }
+                return directoryCompare;
+            });
+
+            return fileList;
+        }
+
+        @Override
+        protected void onPostExecute(List<File> fileList) {
+            adapterReference.get().setFileList(fileList);
         }
     }
 }

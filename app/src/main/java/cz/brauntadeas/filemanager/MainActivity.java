@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_refresh) {
-            fileAdapter.refreshList();
+            fileAdapter.updateList();
             return true;
         }
 
