@@ -2,10 +2,10 @@ package cz.brauntadeas.filemanager;
 
 import android.content.Context;
 import android.content.Intent;
-import android.preference.PreferenceActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-public class SettingsActivity extends PreferenceActivity {
+public class SettingsActivity extends AppCompatActivity {
 
     public static void start(Context context) {
         Intent starter = new Intent(context, SettingsActivity.class);
@@ -15,7 +15,8 @@ public class SettingsActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new PreferenceFragment()).commit();
+        setContentView(R.layout.activity_settings);
+        getFragmentManager().beginTransaction().replace(R.id.fragment_container, new PreferenceFragment()).commit();
     }
 
     public static class PreferenceFragment extends android.support.v14.preference.PreferenceFragment {
