@@ -13,6 +13,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView recyclerView;
 
     private static final String CURRENT_FOLDER = "current_folder";
+    private static final String MULTI_SELECT = "multi_select";
+    private static final String SELECTED_ITEMS = "selected_items";
 
     private FileAdapter fileAdapter;
 
@@ -55,6 +59,12 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
         fileAdapter = new FileAdapter(getFolder(savedInstanceState), recyclerView, this);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.getBoolean(MULTI_SELECT)) {
+                fileAdapter.setSelectedItems(new Gson().fromJson(savedInstanceState.getString(SELECTED_ITEMS), new TypeToken<List<File>>(){}.getType()));
+                fileAdapter.setMultiSelect();
+            }
+        }
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(fileAdapter);
@@ -95,6 +105,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(CURRENT_FOLDER, fileAdapter.getCurrentFolder());
+        outState.putBoolean(MULTI_SELECT, fileAdapter.isMultiSelect());
+        outState.putString(SELECTED_ITEMS, new Gson().toJson(fileAdapter.getSelectedItems()));
         super.onSaveInstanceState(outState);
     }
 

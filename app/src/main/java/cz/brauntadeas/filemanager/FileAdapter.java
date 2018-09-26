@@ -39,7 +39,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private List<File> fileList = new ArrayList<>();
     private File currentFolder;
     private RecyclerView recyclerView;
-    private boolean multiSelect;
+    private boolean multiSelect = false;
     private List<File> selectedItems = new ArrayList<>();
     private Context context;
 
@@ -80,6 +80,22 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     private void newListTask(File file, boolean isSameFolder) {
         new ListDirectoryTask(this, isSameFolder).execute(file);
+    }
+
+    boolean isMultiSelect() {
+        return multiSelect;
+    }
+
+    void setMultiSelect() {
+        ((AppCompatActivity) context).startSupportActionMode(actionModeCallbacks);
+    }
+
+    List<File> getSelectedItems() {
+        return selectedItems;
+    }
+
+    void setSelectedItems(List<File> selectedItems) {
+        this.selectedItems = selectedItems;
     }
 
     @NonNull
@@ -150,7 +166,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
             itemView.setOnClickListener(view -> selectItem(file));
             itemView.setOnLongClickListener(view -> {
-                ((AppCompatActivity) view.getContext()).startSupportActionMode(actionModeCallbacks);
+                setMultiSelect();
                 selectItem(file);
                 return true;
             });
