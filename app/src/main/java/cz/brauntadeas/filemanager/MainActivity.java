@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -47,16 +48,22 @@ public class MainActivity extends AppCompatActivity {
                 .withListener(new MultiplePermissionsListener() {
                     @Override
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
-
+                        if (report.areAllPermissionsGranted()) {
+                            handleLayout(savedInstanceState);
+                        } else {
+                            finish();
+                        }
                     }
 
                     @Override
                     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
-
+                        token.continuePermissionRequest();
                     }
                 })
                 .check();
+    }
 
+    private void handleLayout(Bundle savedInstanceState) {
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
         fileAdapter = new FileAdapter(getFolder(savedInstanceState), recyclerView, this);
         if (savedInstanceState != null) {
