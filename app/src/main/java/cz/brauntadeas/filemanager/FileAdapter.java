@@ -23,7 +23,6 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -42,9 +41,11 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
     private RecyclerView recyclerView;
     private boolean multiSelect;
     private List<File> selectedItems = new ArrayList<>();
+    private Context context;
 
-    FileAdapter(File file, RecyclerView recyclerView) {
+    FileAdapter(File file, RecyclerView recyclerView, Context context) {
         this.recyclerView = recyclerView;
+        this.context = context;
         updateList(file);
     }
 
@@ -190,7 +191,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
             multiSelect = true;
             actionMode.getMenuInflater().inflate(R.menu.contextual, menu);
-            actionMode.setTitle("Select items");
+            actionMode.setTitle(context.getString(R.string.select_items));
             return true;
         }
 
@@ -202,7 +203,9 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
             for (File file : selectedItems) {
-                file.delete();
+                if (!file.delete()) {
+                    Toast.makeText(context, String.format("%s %s", file.getName(), context.getString(R.string.could_not_be_deleted)), Toast.LENGTH_SHORT).show();
+                }
             }
             actionMode.finish();
             return true;

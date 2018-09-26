@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toolbar;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 .check();
 
         RecyclerView.LayoutManager layoutManager = getLayoutManager();
-        fileAdapter = new FileAdapter(getFolder(savedInstanceState), recyclerView);
+        fileAdapter = new FileAdapter(getFolder(savedInstanceState), recyclerView, this);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(fileAdapter);
