@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference android:title="@string/default_folder_title"
+        android:summary="@string/default_folder_summary"
+        android:key="default_folder"
+        android:defaultValue="/storage/emulated/0"
+        android:icon="@drawable/folder" />
+</PreferenceScreen>

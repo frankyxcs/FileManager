@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="no_activity">No activity for this file type</string>
     <string name="delete">Delete</string>
+    <string name="default_folder_title">Default folder</string>
+    <string name="default_folder_summary">Select the folder that is opened when the application launches.</string>
 </resources>

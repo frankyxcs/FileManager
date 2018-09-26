@@ -1,8 +1,10 @@
 package cz.brauntadeas.filemanager;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -59,6 +61,12 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(fileAdapter);
     }
 
+    private File getDefaultFolder() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String path = sharedPreferences.getString("default_folder", Environment.getExternalStorageDirectory().getPath());
+        return new File(path);
+    }
+
     private RecyclerView.LayoutManager getLayoutManager() {
         RecyclerView.LayoutManager layoutManager;
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
@@ -73,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         if (bundle != null) {
             return (File) bundle.getSerializable(CURRENT_FOLDER);
         }
-        return Environment.getExternalStorageDirectory();
+        return getDefaultFolder();
     }
 
     @Override
