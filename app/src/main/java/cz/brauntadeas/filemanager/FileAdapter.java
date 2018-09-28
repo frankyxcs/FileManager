@@ -148,8 +148,10 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
         @BindView(R.id.image_file_type)
         ImageView imageFileType;
 
-        @BindColor(R.color.selectedColor)
+        @BindColor(R.color.colorSelected)
         int colorAccent;
+        @BindColor(R.color.colorBackground)
+        int colorBackground;
 
         FileViewHolder(View itemView) {
             super(itemView);
@@ -177,7 +179,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
             if (multiSelect) {
                 if (selectedItems.contains(file)) {
                     selectedItems.remove(file);
-                    itemView.setBackgroundColor(Color.WHITE);
+                    itemView.setBackgroundColor(colorBackground);
                 } else {
                     selectedItems.add(file);
                     itemView.setBackgroundColor(colorAccent);
