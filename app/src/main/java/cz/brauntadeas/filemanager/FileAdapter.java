@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindColor;
 import butterknife.BindView;
@@ -121,7 +122,7 @@ public class FileAdapter extends RecyclerView.Adapter<FileAdapter.FileViewHolder
 
     private String getMimeType(Uri uri, Context context) {
         String mimeType;
-        if (uri.getScheme().equals(ContentResolver.SCHEME_CONTENT)) {
+        if (Objects.equals(uri.getScheme(), ContentResolver.SCHEME_CONTENT)) {
             ContentResolver contentResolver = context.getContentResolver();
             mimeType = contentResolver.getType(uri);
         } else {
