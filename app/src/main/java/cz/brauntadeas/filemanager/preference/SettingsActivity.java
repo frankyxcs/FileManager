@@ -1,9 +1,11 @@
-package cz.brauntadeas.filemanager;
+package cz.brauntadeas.filemanager.preference;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+
+import cz.brauntadeas.filemanager.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
