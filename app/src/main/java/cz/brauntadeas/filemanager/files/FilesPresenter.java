@@ -4,11 +4,13 @@ import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.brauntadeas.filemanager.os.ListFilesTask;
 import cz.brauntadeas.filemanager.R;
+import cz.brauntadeas.filemanager.util.FileUtils;
 
 class FilesPresenter implements FilesContract.Presenter {
     private final FilesContract.View filesView;
@@ -79,7 +81,11 @@ class FilesPresenter implements FilesContract.Presenter {
     @Override
     public void deleteSelectedFiles() {
         for (File file : selectedFilesList) {
-            file.delete();
+            try {
+                FileUtils.deleteFile(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 

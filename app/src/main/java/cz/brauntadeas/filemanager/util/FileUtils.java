@@ -8,6 +8,7 @@ import android.support.v4.content.FileProvider;
 import android.webkit.MimeTypeMap;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Objects;
 
 import cz.brauntadeas.filemanager.BuildConfig;
@@ -34,5 +35,16 @@ public class FileUtils {
             uri = Uri.fromFile(file);
         }
         return uri;
+    }
+
+    public static void deleteFile(File file) throws FileNotFoundException {
+        if (file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                deleteFile(f);
+            }
+        }
+        if (!file.delete()) {
+            throw new FileNotFoundException("Failed to delete file " + file.getAbsolutePath());
+        }
     }
 }
