@@ -2,11 +2,13 @@ package cz.brauntadeas.filemanager.files;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
@@ -190,6 +192,19 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
         super.onSaveInstanceState(outState);
     }
 
+    private void showDeleteDialog(ActionMode actionMode) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_delete_title)
+                .setMessage(R.string.dialog_delete_message)
+                .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    presenter.deleteSelectedFiles();
+                    actionMode.finish();
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
     private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -206,8 +221,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            presenter.deleteSelectedFiles();
-            actionMode.finish();
+            showDeleteDialog(actionMode);
             return true;
         }
 
