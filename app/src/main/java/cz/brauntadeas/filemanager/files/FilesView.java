@@ -12,7 +12,6 @@ import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -136,10 +135,8 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     public void setPresenter(Bundle bundle) {
         presenter = new FilesPresenter(this, new FilesModel(PreferenceManager.getDefaultSharedPreferences(this)));
         if (bundle == null) {
-            Log.v("presenter", "noSavedInstance");
             presenter.start();
         } else {
-            Log.v("presenter", "savedInstance");
             presenter.start(
                     bundle.getBoolean(MULTI_SELECT, false),
                     (File) bundle.getSerializable(CURRENT_FOLDER),

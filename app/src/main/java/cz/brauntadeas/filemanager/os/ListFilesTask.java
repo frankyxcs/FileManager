@@ -1,7 +1,6 @@
 package cz.brauntadeas.filemanager.os;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -23,7 +22,6 @@ public class ListFilesTask extends AsyncTask<File, Integer, List<File>> {
     @Override
     protected List<File> doInBackground(File... files) {
         File file = files[0];
-        Log.v("presenter_async", file.getAbsolutePath());
         List<File> filesList = Arrays.asList(file.listFiles());
 
         Collections.sort(filesList, (fileOne, fileTwo) -> {
@@ -39,7 +37,6 @@ public class ListFilesTask extends AsyncTask<File, Integer, List<File>> {
 
     @Override
     protected void onPostExecute(List<File> filesList) {
-        Log.v("presenter_async", "onPostExecute");
         presenterReference.get().setFileList(filesList, isSameFolder);
     }
 }
