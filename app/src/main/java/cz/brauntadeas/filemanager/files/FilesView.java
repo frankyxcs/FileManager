@@ -2,17 +2,18 @@ package cz.brauntadeas.filemanager.files;
 
 import android.Manifest;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.ActionMode;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -50,7 +51,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     private static final String SELECTED_ITEMS = "selected_items";
 
     private FilesContract.Presenter presenter;
-    private FilesView.FilesAdapter filesAdapter;
+    private FilesAdapter filesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +66,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
                         if (report.areAllPermissionsGranted()) {
                             setPresenter(savedInstanceState);
                         } else {
+                            Toast.makeText(getApplicationContext(), "You must grant permissions in order to run the app.", Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
@@ -121,7 +123,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
 
     @Override
     public void setUpRecyclerView(RecyclerView.LayoutManager layoutManager) {
-        filesAdapter = new FilesAdapter();
+        filesAdapter = new FilesAdapter(presenter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(filesAdapter);
@@ -132,14 +134,11 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
         return filesAdapter;
     }
 
-
     public void setPresenter(Bundle bundle) {
         presenter = new FilesPresenter(this, new FilesModel(PreferenceManager.getDefaultSharedPreferences(this)));
         if (bundle == null) {
-            Log.v("presenter", "noSavedInstance");
             presenter.start();
         } else {
-            Log.v("presenter", "savedInstance");
             presenter.start(
                     bundle.getBoolean(MULTI_SELECT, false),
                     (File) bundle.getSerializable(CURRENT_FOLDER),
@@ -160,6 +159,11 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     @Override
     public void startActionMode() {
         startSupportActionMode(actionModeCallbacks);
+    }
+
+    @Override
+    public void scrollToTop() {
+        recyclerView.scrollToPosition(0);
     }
 
     @Override
@@ -193,6 +197,19 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
         super.onSaveInstanceState(outState);
     }
 
+    private void showDeleteDialog(ActionMode actionMode) {
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_delete_title)
+                .setMessage(R.string.dialog_delete_message)
+                .setPositiveButton(android.R.string.yes, (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    presenter.deleteSelectedFiles();
+                    actionMode.finish();
+                })
+                .setNegativeButton(android.R.string.no, (dialogInterface, i) -> dialogInterface.dismiss())
+                .show();
+    }
+
     private ActionMode.Callback actionModeCallbacks = new ActionMode.Callback() {
         @Override
         public boolean onCreateActionMode(ActionMode actionMode, Menu menu) {
@@ -209,8 +226,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
 
         @Override
         public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-            presenter.deleteSelectedFiles();
-            actionMode.finish();
+            showDeleteDialog(actionMode);
             return true;
         }
 
@@ -219,71 +235,4 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
             presenter.multiSelectOff();
         }
     };
-
-    class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHolder> implements FilesContract.Adapter {
-        private List<File> fileList = new ArrayList<>();
-
-        @Override
-        public void setFileList(List<File> fileList) {
-            this.fileList = fileList;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void scrollToTop() {
-            recyclerView.scrollToPosition(0);
-        }
-
-        @NonNull
-        @Override
-        public FileViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            return new FileViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_file, viewGroup, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull FileViewHolder holder, int i) {
-            File file = fileList.get(i);
-            holder.textFileName.setText(file.getName());
-            holder.imageFileType.setImageResource(presenter.getFileIcon(file));
-            presenter.handleHolderBackground(file, holder);
-            holder.itemView.setOnClickListener(view -> presenter.onFileClick(file, holder));
-            holder.itemView.setOnLongClickListener(view -> {
-                startActionMode();
-                presenter.selectFile(file, holder);
-                return true;
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return fileList.size();
-        }
-
-        class FileViewHolder extends RecyclerView.ViewHolder implements FilesContract.HolderView {
-            @BindView(R.id.text_file_name)
-            TextView textFileName;
-            @BindView(R.id.image_file_type)
-            ImageView imageFileType;
-
-            @BindColor(R.color.colorSelected)
-            int colorSelected;
-            @BindColor(R.color.colorBackground)
-            int colorBackground;
-
-            FileViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-            }
-
-            @Override
-            public void select() {
-                itemView.setBackgroundColor(colorSelected);
-            }
-
-            @Override
-            public void deselect() {
-                itemView.setBackgroundColor(colorBackground);
-            }
-        }
-    }
 }

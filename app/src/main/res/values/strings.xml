@@ -9,4 +9,6 @@
     <string name="default_folder_summary">Select the folder that is opened when the application launches.</string>
     <string name="select_items">Select items</string>
     <string name="could_not_be_deleted">could not be deleted</string>
+    <string name="dialog_delete_title">Confirm deletion</string>
+    <string name="dialog_delete_message">Are you sure you want to delete selected files? This operation is irreversible.</string>
 </resources>

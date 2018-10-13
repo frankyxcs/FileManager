@@ -4,11 +4,13 @@ import android.content.res.Configuration;
 import android.support.v7.widget.RecyclerView;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cz.brauntadeas.filemanager.os.ListFilesTask;
 import cz.brauntadeas.filemanager.R;
+import cz.brauntadeas.filemanager.util.FileUtils;
 
 class FilesPresenter implements FilesContract.Presenter {
     private final FilesContract.View filesView;
@@ -50,7 +52,7 @@ class FilesPresenter implements FilesContract.Presenter {
     public void setFileList(List<File> fileList, boolean isSameFolder) {
         filesView.getAdapter().setFileList(fileList);
         if (!isSameFolder) {
-            filesView.getAdapter().scrollToTop();
+            filesView.scrollToTop();
         }
     }
 
@@ -79,7 +81,11 @@ class FilesPresenter implements FilesContract.Presenter {
     @Override
     public void deleteSelectedFiles() {
         for (File file : selectedFilesList) {
-            file.delete();
+            try {
+                FileUtils.deleteFile(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -137,6 +143,12 @@ class FilesPresenter implements FilesContract.Presenter {
     @Override
     public List<File> getSelectedFiles() {
         return selectedFilesList;
+    }
+
+    @Override
+    public void onLongFileClick(File file, FilesContract.HolderView holder) {
+        filesView.startActionMode();
+        selectFile(file, holder);
     }
 
     private void deselectFile(File file, FilesContract.HolderView holderView) {
