@@ -52,7 +52,7 @@ class FilesPresenter implements FilesContract.Presenter {
     public void setFileList(List<File> fileList, boolean isSameFolder) {
         filesView.getAdapter().setFileList(fileList);
         if (!isSameFolder) {
-            filesView.getAdapter().scrollToTop();
+            filesView.scrollToTop();
         }
     }
 
@@ -143,6 +143,12 @@ class FilesPresenter implements FilesContract.Presenter {
     @Override
     public List<File> getSelectedFiles() {
         return selectedFilesList;
+    }
+
+    @Override
+    public void onLongFileClick(File file, FilesContract.HolderView holder) {
+        filesView.startActionMode();
+        selectFile(file, holder);
     }
 
     private void deselectFile(File file, FilesContract.HolderView holderView) {

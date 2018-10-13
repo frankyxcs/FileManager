@@ -51,7 +51,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     private static final String SELECTED_ITEMS = "selected_items";
 
     private FilesContract.Presenter presenter;
-    private FilesView.FilesAdapter filesAdapter;
+    private FilesAdapter filesAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +122,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
 
     @Override
     public void setUpRecyclerView(RecyclerView.LayoutManager layoutManager) {
-        filesAdapter = new FilesAdapter();
+        filesAdapter = new FilesAdapter(presenter);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(filesAdapter);
@@ -159,6 +159,11 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     @Override
     public void startActionMode() {
         startSupportActionMode(actionModeCallbacks);
+    }
+
+    @Override
+    public void scrollToTop() {
+        recyclerView.scrollToPosition(0);
     }
 
     @Override
@@ -230,71 +235,4 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
             presenter.multiSelectOff();
         }
     };
-
-    class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.FileViewHolder> implements FilesContract.Adapter {
-        private List<File> fileList = new ArrayList<>();
-
-        @Override
-        public void setFileList(List<File> fileList) {
-            this.fileList = fileList;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public void scrollToTop() {
-            recyclerView.scrollToPosition(0);
-        }
-
-        @NonNull
-        @Override
-        public FileViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-            return new FileViewHolder(LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.row_file, viewGroup, false));
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull FileViewHolder holder, int i) {
-            File file = fileList.get(i);
-            holder.textFileName.setText(file.getName());
-            holder.imageFileType.setImageResource(presenter.getFileIcon(file));
-            presenter.handleHolderBackground(file, holder);
-            holder.itemView.setOnClickListener(view -> presenter.onFileClick(file, holder));
-            holder.itemView.setOnLongClickListener(view -> {
-                startActionMode();
-                presenter.selectFile(file, holder);
-                return true;
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return fileList.size();
-        }
-
-        class FileViewHolder extends RecyclerView.ViewHolder implements FilesContract.HolderView {
-            @BindView(R.id.text_file_name)
-            TextView textFileName;
-            @BindView(R.id.image_file_type)
-            ImageView imageFileType;
-
-            @BindColor(R.color.colorSelected)
-            int colorSelected;
-            @BindColor(R.color.colorBackground)
-            int colorBackground;
-
-            FileViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ButterKnife.bind(this, itemView);
-            }
-
-            @Override
-            public void select() {
-                itemView.setBackgroundColor(colorSelected);
-            }
-
-            @Override
-            public void deselect() {
-                itemView.setBackgroundColor(colorBackground);
-            }
-        }
-    }
 }

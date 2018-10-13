@@ -20,6 +20,7 @@ public interface FilesContract {
         void openFileInDefaultApp(File file);
         void defaultOnBackPressed();
         void startActionMode();
+        void scrollToTop();
     }
 
     interface Presenter extends BasePresenter {
@@ -39,6 +40,7 @@ public interface FilesContract {
         boolean isMultiSelect();
         File getCurrentFolder();
         List<File> getSelectedFiles();
+        void onLongFileClick(File file, HolderView holderView);
     }
 
     interface Model {
@@ -53,6 +55,5 @@ public interface FilesContract {
 
     interface Adapter {
         void setFileList(List<File> fileList);
-        void scrollToTop();
     }
 }
