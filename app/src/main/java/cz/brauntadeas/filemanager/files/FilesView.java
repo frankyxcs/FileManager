@@ -66,6 +66,7 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
                         if (report.areAllPermissionsGranted()) {
                             setPresenter(savedInstanceState);
                         } else {
+                            Toast.makeText(getApplicationContext(), "You must grant permissions in order to run the app.", Toast.LENGTH_LONG).show();
                             finish();
                         }
                     }
@@ -132,7 +133,6 @@ public class FilesView extends AppCompatActivity implements FilesContract.View {
     public FilesContract.Adapter getAdapter() {
         return filesAdapter;
     }
-
 
     public void setPresenter(Bundle bundle) {
         presenter = new FilesPresenter(this, new FilesModel(PreferenceManager.getDefaultSharedPreferences(this)));
