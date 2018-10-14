@@ -1,6 +1,6 @@
 # File Manager
 
-**File Manager** is an Android application supporting **API >= 21** (Android 5.0 Lollipop). It enables you to browse and delete files on your phone.
+**File Manager** is an Android application supporting **API >= 21** (Android 5.0 Lollipop). It enables you to browse and delete files on your phone. It uses MVP architecture.
 
 ## Used libraries:
 
@@ -8,3 +8,7 @@
 - [**Gson**](https://github.com/google/gson) by *Google*
 - [**Dexter**](https://github.com/Karumi/Dexter) by *Dexter*
 - **Support libraries** by *Google*
+
+
+## Screenshots:
+![Alt text](/../master/screenshots/screens.png?raw=true)
