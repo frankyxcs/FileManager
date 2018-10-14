@@ -7,4 +7,5 @@
     <color name="colorIconToolbar">#FFF</color>
     <color name="colorSelected">#1F000000</color>
     <color name="colorBackground">#FAFAFA</color>
+    <color name="colorDivider">#1F000000</color>
 </resources>
